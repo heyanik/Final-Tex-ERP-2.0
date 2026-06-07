@@ -35,8 +35,8 @@ function Login() {
       setSession(data);
       toast.success(`Welcome, ${data.username}`);
       nav({ to: "/" });
-    } catch (e: any) {
-      toast.error(e.message);
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Unable to sign in.");
     } finally {
       setBusy(false);
     }
@@ -55,14 +55,22 @@ function Login() {
           </div>
           <div>
             <Label>Password</Label>
-            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && submit()} />
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && submit()}
+            />
           </div>
           <Button className="w-full" onClick={submit} disabled={busy || !username || !password}>
             {busy ? "Signing in…" : "Sign in"}
           </Button>
           <p className="text-xs text-muted-foreground text-center">
-            No account? Create the first user in <a href="/setup" className="underline">Setup</a>.
+            No account? Create the first user in{" "}
+            <a href="/setup" className="underline">
+              Setup
+            </a>
+            .
           </p>
         </CardContent>
       </Card>

@@ -35,9 +35,21 @@ function Dashboard() {
   const cards = data
     ? [
         { icon: Users, label: "Total Employees", value: data.employees_total },
-        { icon: Package, label: "Stock Remaining", value: `${data.total_stock_yards.toLocaleString()} yd` },
-        { icon: Droplet, label: "Ink Used (This Month)", value: `${data.ink_used_month_ml.toLocaleString()} ml` },
-        { icon: FlaskConical, label: "Ink Remaining", value: `${data.ink_remaining_ml.toLocaleString()} ml` },
+        {
+          icon: Package,
+          label: "Stock Remaining",
+          value: `${data.total_stock_yards.toLocaleString()} yd`,
+        },
+        {
+          icon: Droplet,
+          label: "Ink Used (This Month)",
+          value: `${data.ink_used_month_ml.toLocaleString()} ml`,
+        },
+        {
+          icon: FlaskConical,
+          label: "Ink Remaining",
+          value: `${data.ink_remaining_ml.toLocaleString()} ml`,
+        },
       ]
     : [];
 

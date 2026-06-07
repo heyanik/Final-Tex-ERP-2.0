@@ -6,9 +6,28 @@ import { PageHeader } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -17,12 +36,16 @@ export const Route = createFileRoute("/_app/attendance")({
   component: AttendancePage,
 });
 
-const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const STATUSES = ["", "Present", "Absent", "Half-Day", "Overtime"] as const;
 type Status = (typeof STATUSES)[number];
 
-function pad(n: number) { return String(n).padStart(2, "0"); }
-function daysInMonth(y: number, m: number) { return new Date(y, m, 0).getDate(); }
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
+function daysInMonth(y: number, m: number) {
+  return new Date(y, m, 0).getDate();
+}
 
 const STATUS_STYLE: Record<string, string> = {
   "": "bg-background text-muted-foreground",
@@ -31,7 +54,13 @@ const STATUS_STYLE: Record<string, string> = {
   "Half-Day": "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40",
   Overtime: "bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/40",
 };
-const STATUS_LABEL: Record<string, string> = { "": "—", Present: "P", Absent: "A", "Half-Day": "H", Overtime: "O" };
+const STATUS_LABEL: Record<string, string> = {
+  "": "—",
+  Present: "P",
+  Absent: "A",
+  "Half-Day": "H",
+  Overtime: "O",
+};
 
 function nextStatus(s: Status): Status {
   const i = STATUSES.indexOf(s);
@@ -46,7 +75,10 @@ function AttendancePage() {
   const [openEmp, setOpenEmp] = useState<Employee | null>(null);
   const [openMonth, setOpenMonth] = useState(now.getMonth() + 1);
 
-  const { data: employees = [] } = useQuery({ queryKey: ["employees"], queryFn: () => gas<Employee[]>("listEmployees") });
+  const { data: employees = [] } = useQuery({
+    queryKey: ["employees"],
+    queryFn: () => gas<Employee[]>("listEmployees"),
+  });
   const { data: yearRows = [] } = useQuery({
     queryKey: ["attendance-year", year],
     queryFn: () => gas<AttendanceRow[]>("listAttendance", { year }),
@@ -55,16 +87,18 @@ function AttendancePage() {
   // pre-populate month dropdown defaults
   useEffect(() => {
     if (!employees.length) return;
-    setMonthByEmp(prev => {
+    setMonthByEmp((prev) => {
       const next = { ...prev };
-      employees.forEach(e => { if (!next[e.emp_id]) next[e.emp_id] = now.getMonth() + 1; });
+      employees.forEach((e) => {
+        if (!next[e.emp_id]) next[e.emp_id] = now.getMonth() + 1;
+      });
       return next;
     });
   }, [employees]);
 
   const summary = useMemo(() => {
     const m: Record<string, Record<number, { p: number; a: number; h: number; o: number }>> = {};
-    yearRows.forEach(r => {
+    yearRows.forEach((r) => {
       const month = Number(r.date.slice(5, 7));
       const key = String(r.emp_id);
       m[key] ||= {};
@@ -85,7 +119,12 @@ function AttendancePage() {
         action={
           <div>
             <Label className="text-xs">Year</Label>
-            <Input type="number" value={year} onChange={e => setYear(Number(e.target.value))} className="w-32" />
+            <Input
+              type="number"
+              value={year}
+              onChange={(e) => setYear(Number(e.target.value))}
+              className="w-32"
+            />
           </div>
         }
       />
@@ -106,7 +145,7 @@ function AttendancePage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {employees.map(emp => {
+                {employees.map((emp) => {
                   const m = monthByEmp[emp.emp_id] || now.getMonth() + 1;
                   const s = summary[emp.emp_id]?.[m];
                   return (
@@ -115,10 +154,21 @@ function AttendancePage() {
                       <TableCell className="font-medium">{emp.name}</TableCell>
                       <TableCell>{emp.role}</TableCell>
                       <TableCell>
-                        <Select value={String(m)} onValueChange={v => setMonthByEmp(d => ({ ...d, [emp.emp_id]: Number(v) }))}>
-                          <SelectTrigger><SelectValue /></SelectTrigger>
+                        <Select
+                          value={String(m)}
+                          onValueChange={(v) =>
+                            setMonthByEmp((d) => ({ ...d, [emp.emp_id]: Number(v) }))
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
                           <SelectContent>
-                            {MONTHS.map((name, i) => <SelectItem key={i} value={String(i + 1)}>{name}</SelectItem>)}
+                            {MONTHS.map((name, i) => (
+                              <SelectItem key={i} value={String(i + 1)}>
+                                {name}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </TableCell>
@@ -126,7 +176,15 @@ function AttendancePage() {
                         {s ? `${s.p} / ${s.a} / ${s.h} / ${s.o}` : "—"}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button size="sm" onClick={() => { setOpenEmp(emp); setOpenMonth(m); }}>View</Button>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setOpenEmp(emp);
+                            setOpenMonth(m);
+                          }}
+                        >
+                          View
+                        </Button>
                       </TableCell>
                     </TableRow>
                   );
@@ -153,7 +211,12 @@ function AttendancePage() {
 }
 
 function CalendarDialog({
-  open, onClose, employee, year, month, onSaved,
+  open,
+  onClose,
+  employee,
+  year,
+  month,
+  onSaved,
 }: {
   open: boolean;
   onClose: () => void;
@@ -164,7 +227,8 @@ function CalendarDialog({
 }) {
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["attendance-emp", employee?.emp_id, year, month],
-    queryFn: () => gas<AttendanceRow[]>("listAttendance", { emp_id: employee!.emp_id, year, month }),
+    queryFn: () =>
+      gas<AttendanceRow[]>("listAttendance", { emp_id: employee!.emp_id, year, month }),
     enabled: open && !!employee,
   });
 
@@ -174,13 +238,20 @@ function CalendarDialog({
     const next: Record<string, Status> = {};
     const total = daysInMonth(year, month);
     for (let d = 1; d <= total; d++) next[`${year}-${pad(month)}-${pad(d)}`] = "";
-    rows.forEach(r => { next[r.date] = (r.status as Status) || ""; });
+    rows.forEach((r) => {
+      next[r.date] = (r.status as Status) || "";
+    });
     setCells(next);
   }, [open, employee, year, month, rows]);
 
   const saveMut = useMutation({
-    mutationFn: (entries: { date: string; emp_id: string; status: Status; remarks: string }[]) => gas("bulkAddAttendance", { entries }),
-    onMutate: () => { toast.success("Attendance saved"); onSaved(); onClose(); },
+    mutationFn: (entries: { date: string; emp_id: string; status: Status; remarks: string }[]) =>
+      gas("bulkAddAttendance", { entries }),
+    onMutate: () => {
+      toast.success("Attendance saved");
+      onSaved();
+      onClose();
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -204,21 +275,25 @@ function CalendarDialog({
           <div className="text-sm text-muted-foreground py-8 text-center">Loading…</div>
         ) : (
           <div className="grid grid-cols-7 gap-1.5 select-none">
-            {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => (
-              <div key={d} className="text-[10px] uppercase text-muted-foreground text-center py-1">{d}</div>
+            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+              <div key={d} className="text-[10px] uppercase text-muted-foreground text-center py-1">
+                {d}
+              </div>
             ))}
-            {blanks.map((_, i) => <div key={`b${i}`} />)}
-            {Array.from({ length: total }, (_, i) => i + 1).map(d => {
+            {blanks.map((_, i) => (
+              <div key={`b${i}`} />
+            ))}
+            {Array.from({ length: total }, (_, i) => i + 1).map((d) => {
               const key = `${year}-${pad(month)}-${pad(d)}`;
               const s = cells[key] || "";
               return (
                 <button
                   key={key}
                   type="button"
-                  onClick={() => setCells(c => ({ ...c, [key]: nextStatus(s) }))}
+                  onClick={() => setCells((c) => ({ ...c, [key]: nextStatus(s) }))}
                   className={cn(
                     "rounded-md border h-16 flex flex-col items-center justify-center text-sm transition",
-                    STATUS_STYLE[s]
+                    STATUS_STYLE[s],
                   )}
                 >
                   <span className="font-semibold">{d}</span>
@@ -229,8 +304,24 @@ function CalendarDialog({
           </div>
         )}
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => saveMut.mutate(Object.entries(cells).filter(([, s]) => s !== "").map(([date, status]) => ({ date, emp_id: employee.emp_id, status, remarks: "" })))} disabled={saveMut.isPending}>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            onClick={() =>
+              saveMut.mutate(
+                Object.entries(cells)
+                  .filter(([, s]) => s !== "")
+                  .map(([date, status]) => ({
+                    date,
+                    emp_id: employee.emp_id,
+                    status,
+                    remarks: "",
+                  })),
+              )
+            }
+            disabled={saveMut.isPending}
+          >
             {saveMut.isPending ? "Saving…" : "Save Attendance"}
           </Button>
         </DialogFooter>

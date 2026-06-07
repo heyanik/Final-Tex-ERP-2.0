@@ -1,10 +1,29 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Users, ClipboardCheck, Wallet, Package, FileText, Droplet, Settings, Building2, LogOut, AlertTriangle } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  ClipboardCheck,
+  Wallet,
+  Package,
+  FileText,
+  Droplet,
+  Settings,
+  Building2,
+  LogOut,
+  AlertTriangle,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { clearSession, getSession } from "@/lib/auth";
 import { useEffect, useState } from "react";
 import { needsRenewal, tryUnlock, nextMonth, daysLeftInMonth } from "@/lib/license";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -65,7 +84,7 @@ export function AppLayout() {
                   "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
                   active
                     ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
                 )}
               >
                 <Icon className="size-4" />
@@ -84,7 +103,10 @@ export function AppLayout() {
           </Link>
           {session && (
             <button
-              onClick={() => { clearSession(); navigate({ to: "/login" }); }}
+              onClick={() => {
+                clearSession();
+                navigate({ to: "/login" });
+              }}
               className="w-full flex items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
             >
               <LogOut className="size-4" />
@@ -102,8 +124,9 @@ export function AppLayout() {
           >
             <AlertTriangle className="size-4 shrink-0" />
             <span className="text-left flex-1">
-              <strong>Renewal required.</strong> The app will lock in {daysLeftInMonth() + 1} day(s).
-              Enter the access password for <span className="font-mono">{nextMonth()}</span> to continue using it next month.
+              <strong>Renewal required.</strong> The app will lock in {daysLeftInMonth() + 1}{" "}
+              day(s). Enter the access password for <span className="font-mono">{nextMonth()}</span>{" "}
+              to continue using it next month.
             </span>
             <span className="underline">Enter password</span>
           </button>
@@ -135,8 +158,12 @@ export function AppLayout() {
             placeholder="Access password"
           />
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setRenewOpen(false)}>Later</Button>
-            <Button onClick={submitRenew} disabled={!renewPw}>Unlock</Button>
+            <Button variant="ghost" onClick={() => setRenewOpen(false)}>
+              Later
+            </Button>
+            <Button onClick={submitRenew} disabled={!renewPw}>
+              Unlock
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -144,7 +171,15 @@ export function AppLayout() {
   );
 }
 
-export function PageHeader({ title, description, action }: { title: string; description?: string; action?: React.ReactNode }) {
+export function PageHeader({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description?: string;
+  action?: React.ReactNode;
+}) {
   return (
     <div className="flex flex-wrap items-end justify-between gap-4 border-b px-8 py-6">
       <div>
